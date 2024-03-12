@@ -80,17 +80,20 @@ func main() {
             http.Error(w, "failed to exchange token: "+err.Error(), http.StatusInternalServerError)
             return
         }
+        // Extract the ID token (JWT) from the OAuth2 token if available
+        idToken, ok := token.Extra("id_token").(string)
+        if !ok {
+            http.Error(w, "Failed to get id_token", http.StatusInternalServerError)
+            return
+        }
 
-        // Token retrieved
-        log.Infof(w, "Authentication successful! Token: %v", token)
-		
-		// Print the ID token (JWT) to the console
-		idToken, ok := token.Extra("id_token").(string)
-		if !ok {
-			http.Error(w, "Failed to get id_token", http.StatusInternalServerError)
-			return
-		}
-		log.Infof("Authentication successful! ID Token: %s", idToken)
+        // Respond to the client (browser) with the ID token information
+        w.Header().Set("Content-Type", "text/plain")
+        responseMessage := fmt.Sprintf("Authentication successful! ID Token: %s", idToken)
+        w.Write([]byte(responseMessage))
+
+        // Log the successful authentication and ID token to the server console
+        log.Infof("Authentication successful! ID Token: %s", idToken)
     })
 
     // Order service endpoint
@@ -103,9 +106,10 @@ func main() {
     // Start the authentication flow by redirecting the user to the Google login page
     http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
         authURL := conf.AuthCodeURL(state, oauth2.AccessTypeOffline)
-        log.Infof("You will be redirected to the Google login page. If not, open the following URL in your browser:", authURL)
-        openBrowser(authURL) // Call to corrected openBrowser function
-        http.Redirect(w, r, authURL, http.StatusFound)
+        log.Infof("You will be redirected to the Google login page. If not, open the following URL in your browser: %s", authURL)
+        openBrowser(authURL)
+        w.Header().Set("Content-Type", "text/plain")
+        fmt.Fprintf(w, "Go to URL: %s\n", authURL)
     })
 
     log.Infof("Order service starting on port 8082")

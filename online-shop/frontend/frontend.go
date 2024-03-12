@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -25,8 +25,8 @@ func main() {
 	ticker := time.NewTicker(2 * time.Second)
 	go func() {
 		for range ticker.C {
-			checkService("http://online-shop-cart.online-shop.svc.cluster.local:8083/cart")
-			checkService("http://online-shop-product.online-shop.svc.cluster.local:8081/product")
+			checkService("http://online-shop-cart.online-shop.svc.cluster.local:8083/cart", log)
+			checkService("http://online-shop-product.online-shop.svc.cluster.local:8081/product", log)
 		}
 	}()
 
