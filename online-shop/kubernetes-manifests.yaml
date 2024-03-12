@@ -1,0 +1,114 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: online-shop-cart
+  name: online-shop-cart
+spec:
+  containers:
+  - image: vfiftyfive/online-shop-cart
+    imagePullPolicy: Always
+    name: cart
+    ports:
+    - containerPort: 8083
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: online-shop-product
+  name: online-shop-product
+spec:
+  containers:
+  - image: vfiftyfive/online-shop-product
+    imagePullPolicy: Always
+    name: product
+    ports:
+    - containerPort: 8081
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: online-shop-order
+  name: online-shop-order
+spec:
+  containers:
+  - image: vfiftyfive/online-shop-order
+    imagePullPolicy: Always
+    env:
+    - name: CLIENT_ID
+      value: $CLIENT_ID
+    - name: CLIENT_SECRET
+      value: $CLIENT_SECRET
+    name: order
+    ports:
+    - containerPort: 8082
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: online-shop-frontend
+  name: online-shop-frontend
+spec:
+  serviceAccountName: frontend
+  containers:
+  - image: vfiftyfive/online-shop-frontend
+    imagePullPolicy: Always
+    name: frontend
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: online-shop-product
+  labels:
+    run: online-shop-product
+spec:
+  ports:
+  - port: 8081
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    run: online-shop-product
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: online-shop-order
+  labels:
+    run: online-shop-order
+spec:
+  ports:
+  - port: 8082
+    protocol: TCP
+    targetPort: 8082
+  selector:
+    run: online-shop-order
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: online-shop-cart
+  labels:
+    run: online-shop-cart
+spec:
+  ports:
+  - port: 8083
+    protocol: TCP
+    targetPort: 8083
+  selector:
+    run: online-shop-cart
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: null
+  name: frontend
+  namespace: online-shop
+
