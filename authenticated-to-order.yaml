@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: authenticated-to-order
+  namespace: online-shop
+spec:
+  selector:
+    matchLabels:
+      run: online-shop-order
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"] # Matches any authenticated principal outside the cluster
+    when:
+    - key: request.auth.claims[iss]
+      values: ["https://accounts.google.com"]

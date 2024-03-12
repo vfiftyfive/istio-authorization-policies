@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: frontend-to-order
+  namespace: online-shop
+spec:
+  selector:
+    matchLabels:
+      run: online-shop-order
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/online-shop/sa/frontend"]
+    to:
+    - operation:
+        paths: [/login]
