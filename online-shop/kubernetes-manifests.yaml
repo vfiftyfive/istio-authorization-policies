@@ -108,7 +108,44 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  creationTimestamp: null
   name: frontend
   namespace: online-shop
-
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: online-shop-gw
+spec:
+  # The selector matches the ingress gateway pod labels.
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: order
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: online-shop
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - online-shop-gw
+  http:
+  - match:
+    - uri:
+        prefix: /order
+    - uri:
+        prefix: /login
+    - uri:
+        prefix: /callback
+    route:
+    - destination:
+        port:
+          number: 8082
+        host: online-shop-order

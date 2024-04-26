@@ -2,16 +2,16 @@ apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
   name: frontend-to-order
-  namespace: online-shop
+  namespace: istio-system
 spec:
   selector:
     matchLabels:
-      run: online-shop-order
+      istio: ingressgateway
   action: ALLOW
   rules:
   - from:
     - source:
-        principals: ["cluster.local/ns/online-shop/sa/frontend"]
+        principals: ["*"]
     to:
     - operation:
         paths: [/login]

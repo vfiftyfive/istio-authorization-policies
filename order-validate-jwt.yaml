@@ -2,11 +2,11 @@ apiVersion: security.istio.io/v1
 kind: RequestAuthentication
 metadata:
   name: order-validate-jwt
-  namespace: online-shop
+  namespace: istio-system
 spec:
   selector:
     matchLabels:
-      run: online-shop-order
+      istio: ingressgateway
   jwtRules:
   - issuer: "https://accounts.google.com"
     jwksUri: "https://www.googleapis.com/oauth2/v3/certs"
