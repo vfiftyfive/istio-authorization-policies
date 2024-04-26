@@ -34,7 +34,7 @@ metadata:
   name: online-shop-order
 spec:
   containers:
-  - image: vfiftyfive/online-shop-order
+  - image: vfiftyfive/online-shop-order:nogw
     imagePullPolicy: Always
     env:
     - name: CLIENT_ID
