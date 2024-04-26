@@ -96,8 +96,19 @@ func main() {
 
 	// Order service endpoint
 	http.HandleFunc("/order", func(w http.ResponseWriter, r *http.Request) {
+		headersMap := make(map[string]string)
+		for name, header := range r.Header {
+			name = http.CanonicalHeaderKey(name)
+			for _, h := range header {
+				headersMap[name] = h
+			}
+		}
+
 		w.Header().Set("Content-Type", "application/json")
-		response := map[string]string{"message": "This is the Order Service"}
+		response := map[string]interface{}{
+			"message": "This is the order service",
+			"headers": headersMap,
+		}
 		json.NewEncoder(w).Encode(response)
 	})
 
