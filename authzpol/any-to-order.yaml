@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: any-to-order.yaml
+  namespace: online-shop
+spec:
+  selector:
+    matchLabels:
+      run: online-shop-order
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        paths: [/login, /callback, /order]

@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
 	log := logrus.New()
-    // Set the formatter to include the time and date.
-    log.SetFormatter(&logrus.TextFormatter{
-        FullTimestamp: true,
-    })
+	// Set the formatter to include the time and date.
+	log.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
 
 	// Handler for the frontend service
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +28,7 @@ func main() {
 		for range ticker.C {
 			checkService("http://online-shop-cart.online-shop.svc.cluster.local:8083/cart", log)
 			checkService("http://online-shop-product.online-shop.svc.cluster.local:8081/product", log)
+			checkService("http://online-shop-order.online-shop.svc.cluster.local:8082/order", log)
 		}
 	}()
 

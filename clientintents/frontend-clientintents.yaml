@@ -1,0 +1,24 @@
+apiVersion: k8s.otterize.com/v1alpha3
+kind: ClientIntents
+metadata:
+  name: frontend-clientintents
+  namespace: online-shop
+spec:
+  service:
+    name: online-shop-frontend
+  calls:
+    - name: online-shop-cart
+      type: http
+      HTTPResources:
+        - path: /cart
+          methods: [ GET ]
+    - name: online-shop-order
+      type: http
+      HTTPResources:
+        - path: /order
+          methods: [ GET ]
+    - name: online-shop-product
+      type: http
+      HTTPResources:
+        - path: /product
+          methods: [ GET ]
